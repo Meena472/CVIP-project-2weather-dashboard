@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>body {
+        font-family : Arial, sans-serif;
+        background-image: url("https://64.media.tumblr.com/4a03f667133fcd52d61cd39ee50f1ba3/b5cec31d3669591b-ae/s500x750/69b1052bc17ac683795cddb07f8f3597670fef23.gif");
+        background-size: cover;
+    }
+    
+    .weather-container {
+        max-width : 400px;
+        margin : 0 auto;
+        text-align: center;
+        padding : 20px;
+        background-color: rgba(137, 232, 253, 0.536);
+        border-radius: 10px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+        margin-top : 105px;
+    }
+    
+    h1 {
+        font-size : 26px;
+    }
+    
+    .search {
+        width : 100%;
+        display : flex;
+        align-items : center;
+        justify-content: space-between;
+    }
+    
+    input {
+        border : none;
+        outline : 0;
+        background: #ebfffc;
+        color : #555;
+        padding : 10px 25px;
+        width : 250px;
+        margin : 20px 0 0 20px;
+        border : 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    
+    button {
+        height : 40px;
+        width : 40px;
+        margin : 20px 20px 0;
+        background-color: #ebfffc;
+        border : none;
+        border-radius: 50%;
+        cursor : pointer;
+    }
+    
+    button img {
+        width : 20px;
+    }
+    
+    .weather-icon {
+        width : 100px;
+        margin-top : 30px;
+    }
+    
+    .weather-info h1 {
+        font-size: 40px;
+        font-weight: 500;
+        margin-top : -0.2px;
+    }
+    
+    .weather-info h2 {
+        font-size: 25px;
+        font-weight: 400;
+        margin-top : -25px;
+    }
+    
+    .details {
+        display : flex;
+        align-items: center;
+        justify-content : space-between;
+        padding : 0 20px;
+        margin-top : 50px;
+    }
+    .col {
+        font-size: small;
+        display: flex;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .col img {
+        width : 40px;
+        margin-right: 10px;
+    }
+    
+    .humidity, .wind {
+        font-size : 18px;
+        margin-bottom : -5px;
+    }
+    
+    .weather-info {
+        display: none;
+    }
+    
+    .error {
+        text-align: left;
+        margin-left: 22px;
+        font-size: 13px;
+        margin-top: 10px;
+        display: none;
+    }</style>
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Dashboard</h1>
+         
+        <div class="search">
+            <input type="text" id="locationInput" placeholder="Enter a city">
+        <button> <img src="https://uxwing.com/wp-content/themes/uxwing/download/user-interface/search-icon.png"></button>
+        </div>
+
+        <div class="error">
+            <p>Invalid city name</p>
+        </div>
+        
+        <div class="weather-info">
+            <img src="https://media1.giphy.com/media/Su0pXI7m9Q8TvQuf8s/giphy.gif?cid=6c09b95238hhqf3vyyevg0em9fv9bzo836ib2dnoadn12p19&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s" class="weather-icon">
+            <h1 class="temp">22°c</h1>
+            <h2 class="city">Ahmedabad</h2>
+
+            <div class="details">
+                <div class="col">
+                    <img src="humidity.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+    
+                <div class="col">
+                    <img src="wind.png"> 
+                    <div>
+                        <p class="wind">15 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    const apiKey = "03f8c7aa4841f0c18f052307bd5928e6";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const weatherIcon = document.querySelector(".weather-icon");
+        
+        async function checkWeather(city) {
+            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+        
+            if(response.status == 404) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".weather-info").style.display = "none";
+            }
+            else {
+                var data = await response.json();
+        
+            document.querySelector(".city").innerHTML = data.name; 
+            document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+            document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+            document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+        
+            if(data.weather[0].main == "Clouds") {
+                weatherIcon.src = "https://img.freepik.com/free-psd/cloud-png-isolated-transparent-background_191095-18056.jpg?size=338&ext=jpg&ga=GA1.1.1700460183.1708171200&semt=ais";
+            } 
+            else if(data.weather[0].main == "Clear") {
+                weatherIcon.src = "clear.png";
+            }
+            else if(data.weather[0].main == "Rain") {
+                weatherIcon.src = "rain.png";
+            }
+            else if(data.weather[0].main == "Drizzle") {
+                weatherIcon.src = "drizzle.png";
+            }
+            else if(data.weather[0].main == "Mist") {
+                weatherIcon.src = "mist.png";
+            }
+        
+            document.querySelector(".weather-info").style.display = "block";
+            document.querySelector(".error").style.display = "none";
+            }   
+        }
+        
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        })
+        </script>
+</body> 
+</html>
